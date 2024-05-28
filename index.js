@@ -16,6 +16,7 @@ app.post("/screenshot", async (req, res) => {
     const { url } = req.body;
 
     const browser = await puppeteer.launch({
+      executablePath: "/usr/bin/google-chrome-stable",
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
     const page = await browser.newPage();
