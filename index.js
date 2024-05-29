@@ -1,24 +1,28 @@
-const express = require("express");
-const puppeteer = require("puppeteer");
-const JSZip = require("jszip");
-const cors = require("cors");
+import express, { json } from "express";
+import puppeteer from "puppeteer";
+import JSZip from "jszip";
+import cors from "cors";
 
 const app = express();
 const PORT = 5000;
 
 // Middleware to handle JSON request bodies
-app.use(express.json());
+app.use(json());
 // Enable CORS
-app.use(cors());
+app.use(
+  cors({
+    origin: "*",
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  })
+);
 
 app.post("/screenshot", async (req, res) => {
   try {
     const { url } = req.body;
 
-    const browser = await puppeteer.launch({
-      executablePath: "/usr/bin/google-chrome-stable",
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
-    });
+    console.log("url recieved : ", url);
+
+    const browser = await puppeteer.launch();
     const page = await browser.newPage();
 
     const devices = [
