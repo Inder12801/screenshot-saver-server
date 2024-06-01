@@ -23,7 +23,7 @@ app.post("/screenshot", async (req, res) => {
   try {
     const { url } = req.body;
 
-    console.log("url recieved : ", url);
+    console.log("url received : ", url);
 
     const browser = await puppeteer.launch({
       args: [
@@ -82,15 +82,16 @@ app.post("/screenshot", async (req, res) => {
       let pageHeight = await page.evaluate(() => document.body.scrollHeight);
 
       while (scrollPosition < pageHeight) {
+        await page.evaluate(
+          (scrollPos) => window.scrollTo(0, scrollPos),
+          scrollPosition
+        );
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+
         const screenshot = await page.screenshot({ encoding: "base64" });
         screenshots.push({ device: device.name, screenshot });
 
-        await page.evaluate((viewportHeight) => {
-          window.scrollBy(0, viewportHeight);
-        }, device.viewport.height);
-
         scrollPosition += device.viewport.height;
-        await new Promise((resolve) => setTimeout(resolve, 1000));
         pageHeight = await page.evaluate(() => document.body.scrollHeight);
       }
     }
